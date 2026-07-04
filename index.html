@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tempos & Trocas — Guia de Matchups do Jax</title>
+<meta name="description" content="Planilha 2026 interativa de matchups do Jax top: cooldowns, tempos de troca e runas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0c16;
+    --bg-alt:#150f22;
+    --surface:#1c1730;
+    --surface-2:#251e3c;
+    --line: rgba(233,224,255,0.08);
+    --line-strong: rgba(233,224,255,0.16);
+    --text:#f1ece2;
+    --text-dim:#b8adcf;
+    --text-faint:#7a6e97;
+    --brass:#cf9b46;
+    --brass-soft: rgba(207,155,70,0.16);
+    --q:#e2694b;
+    --w:#d9b45c;
+    --e:#55d6c2;
+    --r:#9c8bef;
+    --p:#7c8fb0;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(156,139,239,0.14), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, rgba(207,155,70,0.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+  }
+  ::selection{ background: var(--brass-soft); color:var(--text); }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:var(--surface-2); border-radius:8px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+
+  a{color:inherit;}
+
+  .app{
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    min-height:100vh;
+  }
+
+  /* ---------- Header (spans full width, sits above grid via body flex) ---------- */
+  .topbar{
+    grid-column: 1 / -1;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    padding:22px 28px 16px 28px;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+  }
+  .brand .mark{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.14em;
+    color:var(--bg);
+    background:var(--brass);
+    padding:4px 8px;
+    border-radius:5px;
+  }
+  .brand h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:22px;
+    letter-spacing:0.02em;
+    margin:0;
+    text-transform:uppercase;
+  }
+  .brand h1 span{ color:var(--brass); }
+  .topbar .tagline{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--text-faint);
+    letter-spacing:0.03em;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    background: linear-gradient(180deg, var(--bg-alt), transparent 300px);
+  }
+  .search-wrap{
+    padding:18px 18px 12px 18px;
+  }
+  .search-wrap input{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line-strong);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    padding:11px 14px;
+    border-radius:10px;
+    outline:none;
+    transition: border-color .15s ease;
+  }
+  .search-wrap input:focus{ border-color:var(--brass); }
+  .search-wrap input::placeholder{ color:var(--text-faint); }
+
+  .count-row{
+    display:flex;
+    justify-content:space-between;
+    padding:0 18px 10px 18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:0.04em;
+  }
+
+  .roster{
+    overflow-y:auto;
+    flex:1;
+    padding: 2px 10px 20px 10px;
+  }
+  .champ-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:transparent;
+    border:1px solid transparent;
+    border-radius:10px;
+    padding:9px 10px;
+    text-align:left;
+    cursor:pointer;
+    color:var(--text-dim);
+    font-family:'Inter', sans-serif;
+    font-size:14.5px;
+    margin-bottom:2px;
+    transition: background .12s ease, color .12s ease, border-color .12s ease;
+  }
+  .champ-btn:hover{ background:var(--surface); color:var(--text); }
+  .champ-btn.active{
+    background:var(--surface-2);
+    border-color: var(--line-strong);
+    color:var(--text);
+  }
+  .champ-btn .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    width:22px;
+    flex-shrink:0;
+  }
+  .champ-btn.active .num{ color:var(--brass); }
+  .champ-btn .name{ flex:1; font-weight:500; letter-spacing:0.01em; }
+  .champ-btn .tagchip{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    color:var(--text-faint);
+    border:1px solid var(--line);
+    padding:2px 6px;
+    border-radius:99px;
+    white-space:nowrap;
+    display:none;
+  }
+  .no-results{
+    padding:24px 14px;
+    color:var(--text-faint);
+    font-size:13.5px;
+    text-align:center;
+  }
+
+  /* ---------- Main ---------- */
+  main{
+    padding: 28px 40px 60px 40px;
+    min-width:0;
+  }
+  .detail{
+    max-width:920px;
+  }
+
+  .detail-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .detail-head .id{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--brass);
+    font-size:13px;
+    letter-spacing:0.08em;
+    margin-bottom:6px;
+    display:block;
+  }
+  .detail-head h2{
+    font-family:'Oswald', sans-serif;
+    font-size:44px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    margin:0;
+    line-height:1;
+  }
+  .badge-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .badge{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    padding:6px 11px;
+    border-radius:99px;
+    border:1px solid var(--line-strong);
+    color:var(--text-dim);
+    background:var(--surface);
+  }
+  .badge.plan{ color:var(--brass); border-color: rgba(207,155,70,0.35); background: var(--brass-soft); }
+
+  .section-label{
+    font-family:'Oswald', sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin: 30px 0 12px 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+
+  /* Cooldown ladder */
+  .ladder-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap:14px;
+  }
+  .skill-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    padding:16px 16px 14px 16px;
+  }
+  .skill-card .skill-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .skill-dot{
+    width:26px; height:26px;
+    border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:#0e0c16;
+    flex-shrink:0;
+  }
+  .skill-name{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:0.06em;
+  }
+  .bars{ display:flex; flex-direction:column; gap:7px; }
+  .bar-row{ display:flex; align-items:center; gap:8px; }
+  .bar-rank{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    color:var(--text-faint);
+    width:14px;
+    text-align:right;
+    flex-shrink:0;
+  }
+  .bar-track{
+    flex:1;
+    height:8px;
+    background:var(--bg-alt);
+    border-radius:5px;
+    overflow:hidden;
+    position:relative;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:5px;
+    transition: width .5s cubic-bezier(.2,.7,.3,1);
+  }
+  .bar-val{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    width:40px;
+    text-align:right;
+    flex-shrink:0;
+  }
+  .plain-cd{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--text-dim);
+    line-height:1.5;
+  }
+  .subgroup{ margin-bottom:10px; }
+  .subgroup:last-child{ margin-bottom:0; }
+  .subgroup-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--text-faint);
+    margin-bottom:5px;
+  }
+
+  /* Lane plan */
+  .plan-list{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .plan-list li{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-left:3px solid var(--brass);
+    border-radius:10px;
+    padding:13px 16px;
+    font-size:14.5px;
+    line-height:1.55;
+    color:var(--text-dim);
+  }
+  .plan-list li b, .plan-list li strong{ color:var(--text); }
+
+  .runes-box{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    padding:16px 18px;
+    font-size:14.5px;
+    color:var(--text-dim);
+    line-height:1.6;
+  }
+  .runes-box .lbl{
+    display:block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    color:var(--r);
+    margin-bottom:6px;
+    text-transform:uppercase;
+  }
+
+  footer{
+    margin-top:44px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    letter-spacing:0.02em;
+  }
+
+  /* Mobile */
+  @media (max-width: 860px){
+    .app{ grid-template-columns: 1fr; }
+    .sidebar{
+      border-right:none;
+      border-bottom:1px solid var(--line);
+      max-height:46vh;
+    }
+    main{ padding:22px 18px 50px 18px; }
+    .detail-head h2{ font-size:32px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bar-fill{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">JAX</span>
+      <h1>Tempos <span>&amp;</span> Trocas</h1>
+    </div>
+    <div class="tagline">PLANILHA 2026 — GUIA DE MATCHUPS · TOP LANE</div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="search-wrap">
+      <input id="search" type="text" placeholder="Buscar campeão…" autocomplete="off">
+    </div>
+    <div class="count-row">
+      <span id="count">43 campeões</span>
+      <span>ORDEM ALFABÉTICA</span>
+    </div>
+    <div class="roster" id="roster"></div>
+  </aside>
+
+  <main>
+    <div class="detail" id="detail"></div>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   DADOS — extraídos da Planilha 2026 (Jax Tempos e Trocas)
+   ============================================================ */
+const DATA = [
+{n:1,name:"Aatrox",tag:"Farm → All-in 6",
+ cds:{P:"22 - 10",Q:"14/12/10/8/6",W:"20/18/16/14/12",E:"9/8/7/6/5",R:"120/100/80"},
+ tips:[
+  "Nível 1 precisamos escolher entre givar os 3 primeiros minions ou pegá-los, tentando não tomar poke do Q dele. No nível 2-3 se atente para crasharmos na 3ª wave, tomando cuidado ao dar Q/E no Aatrox pois isso prejudicaria o final da fase de ataque/wave.",
+  "Nível 3-6 é só pular no Aatrox, dar o combo completo e, se for matar, usar ignite antes do R dele."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:2,name:"Akali",tag:"Poke / Farm",
+ cds:{P:"2 (MS)",Q:"1.5",W:"20/19/18/17/16",E:"16/14.5/13/11.5/10",R:"120/90/60"},
+ tips:[
+  "Nível 1 — jogue como um Rengar, pelo rio fora da wave; tente fazê-la escolher entre te pokear ou farmar.",
+  "Nível 3-6 — toda vez que você pular nela e ela usar a sombra, fuja e jogue em dois tempos.",
+  "A luta começa a ficar boa depois do Negatron."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:3,name:"Anivia",tag:"Timing Preciso",
+ cds:{P:"4",Q:"11/10/9/8/7",W:"17",E:"4",R:"4/3/2"},
+ tips:[
+  "Nível 1 — pelo rio, tente pegá-la com o E; não troque HP por minions.",
+  "Nível 3-6 — toda vez que ela der a cara, pule com EQ (não QE): é o tempo necessário para dar stun sem tomar o stun do Q dela."
+ ],
+ runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
+{n:4,name:"Camille",tag:"Engaje com E",
+ cds:{P:"18/14/10",Q:"9/8/7/6/5",W:"15/14/13/12/11",E:"16/15/14/13/12",R:"140/115/90"},
+ tips:[
+  "Nível 1 — use seu E para engajar sem deixar ela procar a passiva.",
+  "Nível 3-6 — engaje sempre com QE e tente stunar ela quando for usar a corda, cancelando o dash dela."
+ ],
+ runes:"Ritmo, presença, aceleração, dilacerar, triple tonic e reembolso."},
+{n:5,name:"Cho'Gath",tag:"Freeze",
+ cds:{P:"—",Q:"6",W:"11/10.5/10/9.5/9",E:"8/7/6/5/4",R:"80/70/60"},
+ tips:[
+  "Nível 1 — sempre freeze, já que a lane é do Jax.",
+  "Nível 3-6 — jogue QE enquanto o E estiver ligado; fique atento ao knock-up do Cho e dê passinhos para os lados, mantendo o chase."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
+{n:6,name:"Darius",tag:"Defensivo",
+ cds:{P:"—",Q:"9/8/7/6/5",W:"5",E:"26/23.5/21/18.5/16",R:"120/100/80"},
+ tips:[
+  "Nível 1 — evite tomar o Q do Darius.",
+  "Nível 3 — nunca pule no Darius; guarde seu pulo para o Q dele, não deixando ele curar.",
+  "Nível 6 — não deixe o Darius stackar a passiva com o seu E."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:7,name:"Dr. Mundo",tag:"Farm → All-in",
+ cds:{P:"60 - 15",Q:"4",W:"17/16.5/16/15.5/15",E:"9/8.25/7.5/6.75/6",R:"120"},
+ tips:[
+  "Nível 1 — foque em farmar atrás dos minions, mas tente tirar a passiva dele.",
+  "Nível 3-6 — é só pular nele tirando a passiva com EQ, usando a tempestade para correr para frente ou para trás."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:8,name:"Fiora",tag:"Timing (espera o Q)",
+ cds:{P:"—",Q:"13/11.25/9.5/7.75/6",W:"24/22/20/18/16",E:"11/10/9/8/7",R:"110/90/70"},
+ tips:[
+  "Nível 1 — E na wave, evitando tomar o Q dela com o seu E.",
+  "Nível 2 — QE, passinho pro lado, depois use o E andando pros lados antes de estourar.",
+  "Nível 3 — você só vai pular nela quando ela gastar o Q."
+ ],
+ runes:"Ritmo, presença, aceleração, dilacerar, biscoito e cdr."},
+{n:9,name:"Gangplank",tag:"Pressão de Rio",
+ cds:{P:"15",Q:"4.5",W:"22/20/18/16/14",E:"17/16/15/14/13",R:"160/140/120"},
+ tips:[
+  "Nível 1 — jogue pro rio, como um Rengar; puxe a wave pro rio evitando tomar o barril dele.",
+  "Nível 2 — QE, e assim que estourar o E decida entre correr pra frente ou pra trás; se tiver potencial de kill, ignite e full engage."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:10,name:"Garen",tag:"Punir o Giro",
+ cds:{P:"—",Q:"8",W:"22/19.5/17/14.5/12",E:"9/8.25/7.5/6.75/6",R:"120/100/80"},
+ tips:[
+  "Nível 1 — comece hitando a wave pra stackar o Grasp; se ele andar pra frente com E, guarde seu E para depois que ele parar de rodar.",
+  "Nível 3-6 — toda vez que ele rodar, pule no minion evitando dano; quando ele chegar perto, pokeie com seu W + Grasp."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:11,name:"Gnar",tag:"Emboscada",
+ cds:{P:"—",Q:"16/14.5/13/11.5/10",W:"—",E:"22/19.5/17/14.5/12",R:"90/60/30"},
+ tips:[
+  "Nível 1 — saia do rio colado na parede, surpreendendo-o correndo atrás com seu E.",
+  "Nível 3-6 — pule com EQ; no Mega Gnar, desvie do W (stun) dele."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
+{n:12,name:"Gragas",tag:"Punir Barril",
+ cds:{P:"12/10/8/6",Q:"10/9/8/7/6",W:"5",E:"14/13.5/13/12.5/12",R:"100/85/70"},
+ tips:[
+  "Nível 1 — toda barrigada que você tomar, responda com seu Q.",
+  "Nível 3-6 — continue pulando com EQ sem parecer óbvio; espere um pouco antes de pular ou tente chegar perto com E e depois Q."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:13,name:"Gwen",tag:"Harass / Chase",
+ cds:{P:"—",Q:"6.5/5.75/5/4.25/3.5",W:"22/21/20/19/18",E:"13/12.5/12/11.5/11",R:"120/100/80"},
+ tips:[
+  "Nível 1 — pode tentar dar harass com E, mas o mais consistente é usar o E na wave para ganhar pressão.",
+  "Nível 3 — pule com QE dando chase nela."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:14,name:"Heimerdinger",tag:"Farm Seguro",
+ cds:{P:"—",Q:"20 (recarga)",W:"11/10/9/8/7",E:"11",R:"100/85/70"},
+ tips:[
+  "Nível 1 — só farme.",
+  "Nível 3 — pode arriscar com EQ desviando da granada; upar o E aqui pode ser bom para ter menos CD de stun que o Heimerdinger."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
+{n:15,name:"Illaoi",tag:"Crash de Wave",
+ cds:{P:"—",Q:"10/9/8/7/6",W:"4",E:"16/15/14/13/12",R:"120/95/70"},
+ tips:[
+  "Nível 1 — foque em crashar a wave na terceira, já que a Illaoi é fraca sem o nível 6.",
+  "Nível 6 — evite tomar o hook dela; se for pular, vá para trás ou para os lados desviando do hook."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:16,name:"Irelia",tag:"Freeze Total",
+ cds:{P:"—",Q:"10/9/8/7/6",W:"20/18/16/14/12",E:"16/14.5/13/11.5/10",R:"125/105/85"},
+ tips:[
+  "Nível 1 ao 20 a Irelia não joga a lane; foque só em freezar e bater nela se ela for farmar."
+ ],
+ runes:"Ritmo fatal, triunfo, espontaneidade, dilacerar, reembolso e triple tônico."},
+{n:17,name:"Jayce",tag:"Poke até a Torre",
+ cds:{P:"—",Q:"Martelo: 16/14/12/10/8/6 · Canhão: 8",W:"Martelo: 10 · Canhão: 13/11.4/9.8/8.2/6.6/5",E:"Martelo: 20/18/16/14/12/10 · Canhão: 16",R:"6"},
+ tips:[
+  "Nível 1 — use seu Q e tente bater nele até a torre.",
+  "Nível 3 — o E do Jayce tem mais CD; abuse disso jogando em dois tempos."
+ ],
+ runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
+{n:18,name:"Kayle",tag:"Freeze Total",
+ cds:{P:"—",Q:"12/11/10/9/8",W:"15",E:"8/7.5/7/6.5/6",R:"160/120/80"},
+ tips:[
+  "Nível 1 ao 20, freeze ao máximo e sempre que ela for pular, não esqueça de punir."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:19,name:"Kennen",tag:"Poke de Bush",
+ cds:{P:"—",Q:"7/6.25/5.5/4.75/4",W:"13/11.25/9.5/7.75/6",E:"10/9/8/7/6",R:"120"},
+ tips:[
+  "Nível 1 — espere na bush e use o E para tentar poke; senão, foque em pegar o nível 3.",
+  "Nível 3-6 — se conseguir desviar da shuriken, use EQ para conseguir parar o dash do Kennen."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
+{n:20,name:"Kled",tag:"Freeze",
+ cds:{P:"—",Q:"Montado: 11/10/9/8/7 · Desmontado: 20 por carga (2 cargas)",W:"13/12/11/10/9",E:"13/12/11/10/9",R:"140/125/110"},
+ tips:[
+  "Nível 1 ao 20 a matchup é muito boa; foque em freezar e punir o Kled quando ele for farmar."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
+{n:21,name:"Malphite",tag:"All-in Constante",
+ cds:{P:"—",Q:"8",W:"10/9.5/9/8.5/8",E:"7",R:"130/115/100"},
+ tips:[
+  "Nível 1 ao 20, certifique-se sempre de pular com EQ; fora isso é farmar até o crepúsculo full AP."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:22,name:"Mordekaiser",tag:"Pressão de Rio",
+ cds:{P:"—",Q:"8/7/6/5/4",W:"12/11/10/9/8",E:"18/16/14/12/10",R:"140/120/100"},
+ tips:[
+  "Nível 1 — jogue pro rio, forçando ele a escolher entre farmar ou te pokear com o Q.",
+  "Nível 3 — fique sempre atento à sua passiva; ele precisa dar 2 skills e um hit (ou 3 hits) para procá-la."
+ ],
+ runes:"Ritmo, presença, aceleração, dilacerar, triple tonic e reembolso."},
+{n:23,name:"Nasus",tag:"Freeze",
+ cds:{P:"—",Q:"7.5/6.5/5.5/4.5/3.5",W:"15/14/13/12/11",E:"12",R:"120/100/80"},
+ tips:[
+  "Nível 1 ao 20, sempre freeze e puna quando ele for farmar, avançando e ignorando o slow."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:24,name:"Ornn",tag:"Freeze pós-6",
+ cds:{P:"—",Q:"9/8.5/8/7.5/7",W:"12/11.5/11/10.5/10",E:"14/13.5/13/12.5/12",R:"140/120/100"},
+ tips:[
+  "Nível 1 — lute pela pressão e foque em pegar o nível 3.",
+  "Nível 3-6 — a partir daqui é só freezar e esperar ele dar a cara."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:25,name:"Poppy",tag:"Emboscada",
+ cds:{P:"—",Q:"8/7/6/5/4",W:"20/18/16/14/12",E:"14/13/12/11/10",R:"140/120/100"},
+ tips:[
+  "Nível 1 — jogue pelo rio colado na parede para surpreendê-la com o poke do E.",
+  "Nível 3 — sempre que for pular, tente não ser muito óbvio.",
+  "Nível 6 — stack dois hits para a passiva da ult, com poke de W."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:26,name:"Quinn",tag:"Give → Pulo Sutil",
+ cds:{P:"—",Q:"11/10.5/10/9.5/9",W:"50/45/40/35/30",E:"12/11/10/9/8",R:"3"},
+ tips:[
+  "Nível 1 — give tudo até pegar o nível 3.",
+  "Nível 3-6 — sempre que for pular, tente não ser óbvio: use o E, espere um pouco e pule em seguida."
+ ],
+ runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
+{n:27,name:"Renekton",tag:"Pressão + Punição",
+ cds:{P:"—",Q:"7",W:"16/14/12/10/8",E:"16/14.5/13/11.5/10",R:"120/100/80"},
+ tips:[
+  "Nível 1 — a pressão é do Jax; abuse disso ficando na bush, não deixando o Renekton farmar fúria ou minions.",
+  "Nível 3-6 — jogue colado nele, não gaste o Q; guarde para o segundo dash e, assim que ele dashar duas vezes, corra atrás com EQ."
+ ],
+ runes:"Ritmo, presença, aceleração, dilacerar, biscoito e cdr."},
+{n:28,name:"Riven",tag:"Poke Seguro",
+ cds:{P:"—",Q:"13",W:"11/10/9/8/7",E:"10/9/8/7/6",R:"120/90/60"},
+ tips:[
+  "Nível 1 — a pressão geralmente é do Jax; foque em pegar o nível 2 primeiro.",
+  "Nível 3-6 — use o W com Grasp para deixar a Riven sempre low; não engaje nela, provavelmente ela te mata."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e cdr."},
+{n:29,name:"Rumble",tag:"Farm → All-in",
+ cds:{P:"—",Q:"10/9/8/7/6",W:"6",E:"6 por carga (2 cargas, 0.5s entre disparos)",R:"100/85/70"},
+ tips:[
+  "Nível 1 — foque em farmar atrás dos minions.",
+  "Nível 3-6 — pule com todo o kit para o avanço funcionar e escolha entre correr ou bater; fique atento à passiva dele."
+ ],
+ runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
+{n:30,name:"Sett",tag:"Trocar Nível 1",
+ cds:{P:"—",Q:"9/8/7/6/5",W:"18/16.5/15/13.5/12",E:"16/14.5/13/11.5/10",R:"120/100/80"},
+ tips:[
+  "Nível 1 — com o Bone Plating você precisa trocar 1v1, partindo da bush ou da wave; quando ele estiver com 50% de HP, use exhaust.",
+  "Nível 3 — nunca pule nele; use o Q para não tomar o W dele."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, bone plating e crescimento."},
+{n:31,name:"Shen",tag:"Freeze + Punição",
+ cds:{P:"—",Q:"8/7.25/6.5/5.75/5",W:"16/14.5/13/11.5/10",E:"18/16/14/12/10",R:"200/180/160"},
+ tips:[
+  "Nível 1 ao 20 — é só freezar; toda vez que ele der a cara, chegue melee para punir, e depois que ele dashar para sair, pule usando exhaust para matar."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."},
+{n:32,name:"Singed",tag:"All-in Constante",
+ cds:{P:"—",Q:"Sem recarga convencional — habilidade de ativar/desativar",W:"17/16/15/14/13",E:"10/9.5/9/8.5/8",R:"100"},
+ tips:[
+  "É só pular no Singed com EQ sempre."
+ ],
+ runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
+{n:33,name:"Sion",tag:"Poke de Bush",
+ cds:{P:"—",Q:"10/9/8/7/6",W:"15/14/13/12/11",E:"12/11/10/9/8",R:"140/100/60"},
+ tips:[
+  "Nível 1 — espere na bush e tente bater nele com o E.",
+  "Nível 3-6 — sempre pule e desvie do Q dele."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, triple tonic e reembolso."},
+{n:34,name:"Teemo",tag:"Farm → All-in",
+ cds:{P:"—",Q:"7",W:"14",E:"Passiva, sem tempo de recarga",R:"35/30/25 por carga (0.25s entre colocações)"},
+ tips:[
+  "Nível 1 — evite tomar poke, usando o E para farmar.",
+  "Nível 3-6 — pule, hit com o pezinho para acompanhar a velocidade dele, depois o E."
+ ],
+ runes:"Pezinho, presença, aceleração, dilacerar, ventos e inabalável (runinhas de tenacidade)."},
+{n:35,name:"Tryndamere",tag:"Reativo",
+ cds:{P:"—",Q:"12",W:"14",E:"12/11/10/9/8 (reduzido em críticos)",R:"120/100/80"},
+ tips:[
+  "Nível 1 — geralmente a pressão é do Trynda, pois toda vez que você for hitar ele sai com o dash.",
+  "Nível 3 — pule nele depois que ele dashar.",
+  "Nível 6 — não gaste o E se for dar all-in; guarde para a ult dele e jogue QR."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, triple tonic e reembolso."},
+{n:36,name:"Urgot",tag:"Farm → All-in",
+ cds:{P:"—",Q:"10/9.5/9/8.5/8",W:"12/9/6/3/0 (no nível máximo vira ativar/desativar)",E:"16/15.5/15/14.5/14",R:"100/85/70"},
+ tips:[
+  "Nível 1 ao 6 — você só precisa pegar o nível 3 para engajar com o exhaust."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito (runinhas de tenacidade)."},
+{n:37,name:"Vayne",tag:"Farm → All-in",
+ cds:{P:"—",Q:"6/5/4/3/2",W:"Passiva, sem tempo de recarga",E:"20/18/16/14/12",R:"100/85/70"},
+ tips:[
+  "Nível 1 — tente givar farm.",
+  "Nível 3 — pule nela com EQ.",
+  "Nível 6 — use todo o combo."
+ ],
+ runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr."},
+{n:38,name:"Vladimir",tag:"Farm → All-in",
+ cds:{P:"—",Q:"9/7.9/6.8/5.7/4.6",W:"28/25/22/19/16",E:"13/11/9/7/5",R:"120"},
+ tips:[
+  "Nível 1 — give farm até o nível 3.",
+  "Nível 3 — pule nele com QE.",
+  "Nível 6 — pode jogar em dois tempos."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
+{n:39,name:"Volibear",tag:"Pressão + Counter",
+ cds:{P:"—",Q:"14/13/12/11/10",W:"5",E:"16",R:"160/135/110"},
+ tips:[
+  "Nível 1 — use sua pressão para pegar o nível 2 primeiro.",
+  "Nível 3-6 — sempre espere um pouco para usar o E; às vezes dá para dar counter no stun dele."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito (runinhas de tenacidade)."},
+{n:40,name:"Yorick",tag:"Freeze",
+ cds:{P:"—",Q:"7/6.25/5.5/4.75/4",W:"20/18/16/14/12",E:"12/11/10/9/8",R:"160/130/100"},
+ tips:[
+  "Nível 1 — farme e freeze.",
+  "Nível 3-6 — pule nele somente quando gastar a gaiola."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."},
+{n:41,name:"Yone",tag:"Força o Dash",
+ cds:{P:"—",Q:"4 (reduzido pela velocidade de ataque)",W:"14 (reduzido pela velocidade de ataque)",E:"22/19/16/13/10",R:"120/100/80"},
+ tips:[
+  "Nível 1 — escolha entre trocar com ele ou givar até o nível 3.",
+  "Nível 3-6 — pule nele forçando o gasto do dash."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."},
+{n:42,name:"Yasuo",tag:"Punir Dash",
+ cds:{P:"—",Q:"4 (reduzido pela velocidade de ataque)",W:"25/23/21/19/17",E:"0.5/0.4/0.3/0.2/0.1 (mesmo alvo: 10/9/8/7/6)",R:"70/50/30"},
+ tips:[
+  "Nível 1 — com Grasp stackado, tente bater nele.",
+  "Nível 3 — é só pular e usar o E para não deixar o Yasuo escapar com o dash."
+ ],
+ runes:"Grasp, demolir, ventos, crescimento, biscoito e cdr."},
+{n:43,name:"Zac",tag:"Emboscada",
+ cds:{P:"—",Q:"14/12.5/11/9.5/8",W:"5 (coletar gosma reduz 1s)",E:"22/19/16/13/10",R:"120/105/90"},
+ tips:[
+  "Nível 1 — não deixe ele farmar; espere na bush.",
+  "Nível 3-6 — é só pular nele com QE."
+ ],
+ runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."}
+];
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const SKILL_COLORS = { P:'var(--p)', Q:'var(--q)', W:'var(--w)', E:'var(--e)', R:'var(--r)' };
+const SKILL_ORDER = ['P','Q','W','E','R'];
+
+function parseRankList(raw){
+  if(!raw) return null;
+  const cleaned = raw.trim();
+  if(cleaned === '—' || cleaned === '-') return null;
+  if(cleaned.includes('|') || cleaned.includes(':') || /[a-zA-ZÀ-ÿ]{3,}/.test(cleaned.replace(/recarga|s\b/gi,''))){
+    // contains descriptive text alongside numbers -> not a clean rank ladder
+  }
+  const tokens = cleaned.split('/').map(t => t.trim());
+  if(tokens.length < 2 || tokens.length > 6) return null;
+  const nums = tokens.map(t => {
+    const cleanTok = t.replace(/s$/i,'').replace(',', '.').match(/-?\d+(\.\d+)?/);
+    return cleanTok ? parseFloat(cleanTok[0]) : NaN;
+  });
+  if(nums.some(isNaN)) return null;
+  return nums;
+}
+
+function renderSkillValue(raw){
+  if(!raw || raw.trim() === '—' || raw.trim() === '-'){
+    return `<div class="plain-cd">— não possui cooldown convencional</div>`;
+  }
+  if(raw.includes(' · ')){
+    const parts = raw.split(' · ');
+    return parts.map(p => {
+      const idx = p.indexOf(':');
+      if(idx === -1) return `<div class="plain-cd">${escapeHtml(p)}</div>`;
+      const label = p.slice(0, idx).trim();
+      const val = p.slice(idx+1).trim();
+      return `<div class="subgroup"><div class="subgroup-label">${escapeHtml(label)}</div>${renderInner(val)}</div>`;
+    }).join('');
+  }
+  return renderInner(raw);
+}
+
+function renderInner(raw){
+  const nums = parseRankList(raw);
+  if(nums){
+    const max = Math.max(...nums);
+    return `<div class="bars">` + nums.map((v,i) => {
+      const pct = Math.max(8, Math.round((v/max)*100));
+      return `<div class="bar-row">
+        <span class="bar-rank">${i+1}</span>
+        <span class="bar-track"><span class="bar-fill" style="width:${pct}%; background:var(--__color)"></span></span>
+        <span class="bar-val">${v}s</span>
+      </div>`;
+    }).join('') + `</div>`;
+  }
+  return `<div class="plain-cd">${escapeHtml(raw)}</div>`;
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderRoster(filter=''){
+  const roster = document.getElementById('roster');
+  const q = filter.trim().toLowerCase();
+  const list = DATA.filter(c => c.name.toLowerCase().includes(q));
+  document.getElementById('count').textContent = `${list.length} campeão${list.length===1?'':'s'}`;
+  if(list.length === 0){
+    roster.innerHTML = `<div class="no-results">Nenhum campeão encontrado.</div>`;
+    return;
+  }
+  roster.innerHTML = list.map(c => `
+    <button class="champ-btn ${c.name===currentName ? 'active':''}" data-name="${c.name}">
+      <span class="num">${String(c.n).padStart(2,'0')}</span>
+      <span class="name">${c.name}</span>
+    </button>
+  `).join('');
+  roster.querySelectorAll('.champ-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectChampion(btn.dataset.name));
+  });
+}
+
+let currentName = 'Aatrox';
+
+function selectChampion(name){
+  currentName = name;
+  const c = DATA.find(d => d.name === name);
+  if(!c) return;
+  renderDetail(c);
+  renderRoster(document.getElementById('search').value);
+  document.querySelectorAll('.champ-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.name === name);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderDetail(c){
+  const detail = document.getElementById('detail');
+  detail.innerHTML = `
+    <div class="detail-head">
+      <div>
+        <span class="id">MATCHUP ${String(c.n).padStart(2,'0')} / 43 — JAX TOP</span>
+        <h2>${c.name}</h2>
+      </div>
+      <div class="badge-row">
+        <span class="badge plan">${escapeHtml(c.tag)}</span>
+      </div>
+    </div>
+
+    <div class="section-label">Tempos das habilidades</div>
+    <div class="ladder-grid">
+      ${SKILL_ORDER.map(k => `
+        <div class="skill-card">
+          <div class="skill-top">
+            <div class="skill-dot" style="background:${SKILL_COLORS[k]}">${k}</div>
+            <div class="skill-name">Cooldown por rank</div>
+          </div>
+          ${renderSkillValue(c.cds[k]).replaceAll('var(--__color)', SKILL_COLORS[k])}
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="section-label">Como jogar a lane</div>
+    <ul class="plan-list">
+      ${c.tips.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+    </ul>
+
+    <div class="section-label">Runas</div>
+    <div class="runes-box">
+      <span class="lbl">Sugestão de página de runas</span>
+      ${escapeHtml(c.runes)}
+    </div>
+
+    <footer>PLANILHA 2026 — MATCHUPS DE JAX · TEMPOS E TROCAS · DADOS PODEM MUDAR APÓS ATUALIZAÇÕES DO JOGO</footer>
+  `;
+}
+
+document.getElementById('search').addEventListener('input', (e) => {
+  renderRoster(e.target.value);
+});
+
+// init
+renderRoster();
+selectChampion('Aatrox');
+</script>
+</body>
+</html>

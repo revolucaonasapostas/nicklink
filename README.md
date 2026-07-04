@@ -1,1 +1,30 @@
-# nicklink
+# Tempos & Trocas — Guia de Matchups do Jax
+
+Site estático (HTML/CSS/JS puro, sem build) com os 43 matchups da Planilha 2026,
+com busca, ladder visual de cooldowns por rank e o plano de lane de cada campeão.
+
+## Rodar localmente
+Basta abrir `index.html` no navegador, ou:
+```bash
+npx serve .
+```
+
+## Publicar no Vercel
+
+**Opção A — pelo site (mais fácil):**
+1. Crie um repositório no GitHub e suba esta pasta (`index.html`, `vercel.json`).
+2. Entre em https://vercel.com/new e importe o repositório.
+3. Framework preset: **Other**. Não precisa de build command nem output directory.
+4. Clique em Deploy.
+
+**Opção B — pela CLI:**
+```bash
+npm i -g vercel
+cd jax-site
+vercel
+```
+Siga as perguntas (aceite os padrões) e o Vercel te dará a URL pública.
+
+## Estrutura
+- `index.html` — site inteiro (dados, estilos e lógica embutidos)
+- `vercel.json` — configuração mínima de deploy
