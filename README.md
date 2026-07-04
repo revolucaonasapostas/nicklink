@@ -28,3 +28,10 @@ Siga as perguntas (aceite os padrões) e o Vercel te dará a URL pública.
 ## Estrutura
 - `index.html` — site inteiro (dados, estilos e lógica embutidos)
 - `vercel.json` — configuração mínima de deploy
+
+## Imagens
+Os ícones e as splash arts dos campeões (incluindo o Jax no cabeçalho) vêm do
+**Data Dragon**, o CDN oficial que a Riot Games disponibiliza gratuitamente
+para sites e ferramentas de fãs usarem os assets do jogo. O site busca a
+versão de patch mais recente automaticamente ao carregar; nenhuma imagem é
+armazenada no repositório.
