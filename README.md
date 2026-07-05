@@ -29,6 +29,12 @@ Siga as perguntas (aceite os padrões) e o Vercel te dará a URL pública.
 - `index.html` — site inteiro (dados, estilos e lógica embutidos)
 - `vercel.json` — configuração mínima de deploy
 
+## Vídeos
+Cada matchup tem um vídeo do YouTube incorporado (player oficial embutido via iframe,
+o mesmo mecanismo usado por qualquer blog ou site de fãs) mostrando a lane Jax vs
+aquele campeão, além de um link "Ver mais vídeos" que abre a busca do YouTube para
+esse matchup específico.
+
 ## Imagens
 Os ícones e as splash arts dos campeões (incluindo o Jax no cabeçalho) vêm do
 **Data Dragon**, o CDN oficial que a Riot Games disponibiliza gratuitamente

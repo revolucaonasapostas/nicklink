@@ -382,7 +382,39 @@
     margin-bottom:5px;
   }
 
-  /* Lane plan */
+  .video-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    padding:14px;
+  }
+  .video-embed{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--bg-alt);
+  }
+  .video-embed iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+  }
+  .more-videos{
+    display:inline-block;
+    margin-top:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--brass);
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+    transition: border-color .15s ease;
+  }
+  .more-videos:hover{ border-color: var(--brass); }
+
   .plan-list{
     list-style:none;
     margin:0; padding:0;
@@ -509,14 +541,14 @@ fetch('https://ddragon.leagueoflegends.com/api/versions.json')
    DADOS — extraídos da Planilha 2026 (Jax Tempos e Trocas)
    ============================================================ */
 const DATA = [
-{n:1,name:"Aatrox",id:"Aatrox",tag:"Farm → All-in 6",
+{n:1,name:"Aatrox",id:"Aatrox",yt:"jEzvYX2pGxM",tag:"Farm → All-in 6",
  cds:{P:"22 - 10",Q:"14/12/10/8/6",W:"20/18/16/14/12",E:"9/8/7/6/5",R:"120/100/80"},
  tips:[
   "Nível 1 precisamos escolher entre givar os 3 primeiros minions ou pegá-los, tentando não tomar poke do Q dele. No nível 2-3 se atente para crasharmos na 3ª wave, tomando cuidado ao dar Q/E no Aatrox pois isso prejudicaria o final da fase de ataque/wave.",
   "Nível 3-6 é só pular no Aatrox, dar o combo completo e, se for matar, usar ignite antes do R dele."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:2,name:"Akali",id:"Akali",tag:"Poke / Farm",
+{n:2,name:"Akali",id:"Akali",yt:"X3sAv-pBcus",tag:"Poke / Farm",
  cds:{P:"2 (MS)",Q:"1.5",W:"20/19/18/17/16",E:"16/14.5/13/11.5/10",R:"120/90/60"},
  tips:[
   "Nível 1 — jogue como um Rengar, pelo rio fora da wave; tente fazê-la escolher entre te pokear ou farmar.",
@@ -524,28 +556,28 @@ const DATA = [
   "A luta começa a ficar boa depois do Negatron."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:3,name:"Anivia",id:"Anivia",tag:"Timing Preciso",
+{n:3,name:"Anivia",id:"Anivia",yt:"yrSFcrIBMjg",tag:"Timing Preciso",
  cds:{P:"4",Q:"11/10/9/8/7",W:"17",E:"4",R:"4/3/2"},
  tips:[
   "Nível 1 — pelo rio, tente pegá-la com o E; não troque HP por minions.",
   "Nível 3-6 — toda vez que ela der a cara, pule com EQ (não QE): é o tempo necessário para dar stun sem tomar o stun do Q dela."
  ],
  runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
-{n:4,name:"Camille",id:"Camille",tag:"Engaje com E",
+{n:4,name:"Camille",id:"Camille",yt:"YUGwWZX2hTM",tag:"Engaje com E",
  cds:{P:"18/14/10",Q:"9/8/7/6/5",W:"15/14/13/12/11",E:"16/15/14/13/12",R:"140/115/90"},
  tips:[
   "Nível 1 — use seu E para engajar sem deixar ela procar a passiva.",
   "Nível 3-6 — engaje sempre com QE e tente stunar ela quando for usar a corda, cancelando o dash dela."
  ],
  runes:"Ritmo, presença, aceleração, dilacerar, triple tonic e reembolso."},
-{n:5,name:"Cho'Gath",id:"Chogath",tag:"Freeze",
+{n:5,name:"Cho'Gath",id:"Chogath",yt:"o5yZrFy3nnA",tag:"Freeze",
  cds:{P:"—",Q:"6",W:"11/10.5/10/9.5/9",E:"8/7/6/5/4",R:"80/70/60"},
  tips:[
   "Nível 1 — sempre freeze, já que a lane é do Jax.",
   "Nível 3-6 — jogue QE enquanto o E estiver ligado; fique atento ao knock-up do Cho e dê passinhos para os lados, mantendo o chase."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
-{n:6,name:"Darius",id:"Darius",tag:"Defensivo",
+{n:6,name:"Darius",id:"Darius",yt:"SKbiWUIJO9k",tag:"Defensivo",
  cds:{P:"—",Q:"9/8/7/6/5",W:"5",E:"26/23.5/21/18.5/16",R:"120/100/80"},
  tips:[
   "Nível 1 — evite tomar o Q do Darius.",
@@ -553,14 +585,14 @@ const DATA = [
   "Nível 6 — não deixe o Darius stackar a passiva com o seu E."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:7,name:"Dr. Mundo",id:"DrMundo",tag:"Farm → All-in",
+{n:7,name:"Dr. Mundo",id:"DrMundo",yt:"6GnVGRuSbTI",tag:"Farm → All-in",
  cds:{P:"60 - 15",Q:"4",W:"17/16.5/16/15.5/15",E:"9/8.25/7.5/6.75/6",R:"120"},
  tips:[
   "Nível 1 — foque em farmar atrás dos minions, mas tente tirar a passiva dele.",
   "Nível 3-6 — é só pular nele tirando a passiva com EQ, usando a tempestade para correr para frente ou para trás."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:8,name:"Fiora",id:"Fiora",tag:"Timing (espera o Q)",
+{n:8,name:"Fiora",id:"Fiora",yt:"zc2cIV2jG60",tag:"Timing (espera o Q)",
  cds:{P:"—",Q:"13/11.25/9.5/7.75/6",W:"24/22/20/18/16",E:"11/10/9/8/7",R:"110/90/70"},
  tips:[
   "Nível 1 — E na wave, evitando tomar o Q dela com o seu E.",
@@ -568,114 +600,114 @@ const DATA = [
   "Nível 3 — você só vai pular nela quando ela gastar o Q."
  ],
  runes:"Ritmo, presença, aceleração, dilacerar, biscoito e cdr."},
-{n:9,name:"Gangplank",id:"Gangplank",tag:"Pressão de Rio",
+{n:9,name:"Gangplank",id:"Gangplank",yt:"VpOLQqhnaLw",tag:"Pressão de Rio",
  cds:{P:"15",Q:"4.5",W:"22/20/18/16/14",E:"17/16/15/14/13",R:"160/140/120"},
  tips:[
   "Nível 1 — jogue pro rio, como um Rengar; puxe a wave pro rio evitando tomar o barril dele.",
   "Nível 2 — QE, e assim que estourar o E decida entre correr pra frente ou pra trás; se tiver potencial de kill, ignite e full engage."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:10,name:"Garen",id:"Garen",tag:"Punir o Giro",
+{n:10,name:"Garen",id:"Garen",yt:"drBS_qxfggw",tag:"Punir o Giro",
  cds:{P:"—",Q:"8",W:"22/19.5/17/14.5/12",E:"9/8.25/7.5/6.75/6",R:"120/100/80"},
  tips:[
   "Nível 1 — comece hitando a wave pra stackar o Grasp; se ele andar pra frente com E, guarde seu E para depois que ele parar de rodar.",
   "Nível 3-6 — toda vez que ele rodar, pule no minion evitando dano; quando ele chegar perto, pokeie com seu W + Grasp."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:11,name:"Gnar",id:"Gnar",tag:"Emboscada",
+{n:11,name:"Gnar",id:"Gnar",yt:"qMCuos7AUuQ",tag:"Emboscada",
  cds:{P:"—",Q:"16/14.5/13/11.5/10",W:"—",E:"22/19.5/17/14.5/12",R:"90/60/30"},
  tips:[
   "Nível 1 — saia do rio colado na parede, surpreendendo-o correndo atrás com seu E.",
   "Nível 3-6 — pule com EQ; no Mega Gnar, desvie do W (stun) dele."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
-{n:12,name:"Gragas",id:"Gragas",tag:"Punir Barril",
+{n:12,name:"Gragas",id:"Gragas",yt:"umAeLATUY8g",tag:"Punir Barril",
  cds:{P:"12/10/8/6",Q:"10/9/8/7/6",W:"5",E:"14/13.5/13/12.5/12",R:"100/85/70"},
  tips:[
   "Nível 1 — toda barrigada que você tomar, responda com seu Q.",
   "Nível 3-6 — continue pulando com EQ sem parecer óbvio; espere um pouco antes de pular ou tente chegar perto com E e depois Q."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:13,name:"Gwen",id:"Gwen",tag:"Harass / Chase",
+{n:13,name:"Gwen",id:"Gwen",yt:"UmvCDl1j2g4",tag:"Harass / Chase",
  cds:{P:"—",Q:"6.5/5.75/5/4.25/3.5",W:"22/21/20/19/18",E:"13/12.5/12/11.5/11",R:"120/100/80"},
  tips:[
   "Nível 1 — pode tentar dar harass com E, mas o mais consistente é usar o E na wave para ganhar pressão.",
   "Nível 3 — pule com QE dando chase nela."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:14,name:"Heimerdinger",id:"Heimerdinger",tag:"Farm Seguro",
+{n:14,name:"Heimerdinger",id:"Heimerdinger",yt:"Mi-08_m7yl4",tag:"Farm Seguro",
  cds:{P:"—",Q:"20 (recarga)",W:"11/10/9/8/7",E:"11",R:"100/85/70"},
  tips:[
   "Nível 1 — só farme.",
   "Nível 3 — pode arriscar com EQ desviando da granada; upar o E aqui pode ser bom para ter menos CD de stun que o Heimerdinger."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
-{n:15,name:"Illaoi",id:"Illaoi",tag:"Crash de Wave",
+{n:15,name:"Illaoi",id:"Illaoi",yt:"kX4HXv3kAko",tag:"Crash de Wave",
  cds:{P:"—",Q:"10/9/8/7/6",W:"4",E:"16/15/14/13/12",R:"120/95/70"},
  tips:[
   "Nível 1 — foque em crashar a wave na terceira, já que a Illaoi é fraca sem o nível 6.",
   "Nível 6 — evite tomar o hook dela; se for pular, vá para trás ou para os lados desviando do hook."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:16,name:"Irelia",id:"Irelia",tag:"Freeze Total",
+{n:16,name:"Irelia",id:"Irelia",yt:"wI6YoQgQcZM",tag:"Freeze Total",
  cds:{P:"—",Q:"10/9/8/7/6",W:"20/18/16/14/12",E:"16/14.5/13/11.5/10",R:"125/105/85"},
  tips:[
   "Nível 1 ao 20 a Irelia não joga a lane; foque só em freezar e bater nela se ela for farmar."
  ],
  runes:"Ritmo fatal, triunfo, espontaneidade, dilacerar, reembolso e triple tônico."},
-{n:17,name:"Jayce",id:"Jayce",tag:"Poke até a Torre",
+{n:17,name:"Jayce",id:"Jayce",yt:"E2TQCLJxZMQ",tag:"Poke até a Torre",
  cds:{P:"—",Q:"Martelo: 16/14/12/10/8/6 · Canhão: 8",W:"Martelo: 10 · Canhão: 13/11.4/9.8/8.2/6.6/5",E:"Martelo: 20/18/16/14/12/10 · Canhão: 16",R:"6"},
  tips:[
   "Nível 1 — use seu Q e tente bater nele até a torre.",
   "Nível 3 — o E do Jayce tem mais CD; abuse disso jogando em dois tempos."
  ],
  runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
-{n:18,name:"Kayle",id:"Kayle",tag:"Freeze Total",
+{n:18,name:"Kayle",id:"Kayle",yt:"JVsTWgKUG_E",tag:"Freeze Total",
  cds:{P:"—",Q:"12/11/10/9/8",W:"15",E:"8/7.5/7/6.5/6",R:"160/120/80"},
  tips:[
   "Nível 1 ao 20, freeze ao máximo e sempre que ela for pular, não esqueça de punir."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:19,name:"Kennen",id:"Kennen",tag:"Poke de Bush",
+{n:19,name:"Kennen",id:"Kennen",yt:"ENDgJ3v3Fnk",tag:"Poke de Bush",
  cds:{P:"—",Q:"7/6.25/5.5/4.75/4",W:"13/11.25/9.5/7.75/6",E:"10/9/8/7/6",R:"120"},
  tips:[
   "Nível 1 — espere na bush e use o E para tentar poke; senão, foque em pegar o nível 3.",
   "Nível 3-6 — se conseguir desviar da shuriken, use EQ para conseguir parar o dash do Kennen."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
-{n:20,name:"Kled",id:"Kled",tag:"Freeze",
+{n:20,name:"Kled",id:"Kled",yt:"Aa7xYoHXIlc",tag:"Freeze",
  cds:{P:"—",Q:"Montado: 11/10/9/8/7 · Desmontado: 20 por carga (2 cargas)",W:"13/12/11/10/9",E:"13/12/11/10/9",R:"140/125/110"},
  tips:[
   "Nível 1 ao 20 a matchup é muito boa; foque em freezar e punir o Kled quando ele for farmar."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr (tenacidade nas runinhas)."},
-{n:21,name:"Malphite",id:"Malphite",tag:"All-in Constante",
+{n:21,name:"Malphite",id:"Malphite",yt:"AKmaF7pHtq0",tag:"All-in Constante",
  cds:{P:"—",Q:"8",W:"10/9.5/9/8.5/8",E:"7",R:"130/115/100"},
  tips:[
   "Nível 1 ao 20, certifique-se sempre de pular com EQ; fora isso é farmar até o crepúsculo full AP."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:22,name:"Mordekaiser",id:"Mordekaiser",tag:"Pressão de Rio",
+{n:22,name:"Mordekaiser",id:"Mordekaiser",yt:"kXEdnM3VphA",tag:"Pressão de Rio",
  cds:{P:"—",Q:"8/7/6/5/4",W:"12/11/10/9/8",E:"18/16/14/12/10",R:"140/120/100"},
  tips:[
   "Nível 1 — jogue pro rio, forçando ele a escolher entre farmar ou te pokear com o Q.",
   "Nível 3 — fique sempre atento à sua passiva; ele precisa dar 2 skills e um hit (ou 3 hits) para procá-la."
  ],
  runes:"Ritmo, presença, aceleração, dilacerar, triple tonic e reembolso."},
-{n:23,name:"Nasus",id:"Nasus",tag:"Freeze",
+{n:23,name:"Nasus",id:"Nasus",yt:"yVY_IO0I0iU",tag:"Freeze",
  cds:{P:"—",Q:"7.5/6.5/5.5/4.5/3.5",W:"15/14/13/12/11",E:"12",R:"120/100/80"},
  tips:[
   "Nível 1 ao 20, sempre freeze e puna quando ele for farmar, avançando e ignorando o slow."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:24,name:"Ornn",id:"Ornn",tag:"Freeze pós-6",
+{n:24,name:"Ornn",id:"Ornn",yt:"8i3Mw2_dst0",tag:"Freeze pós-6",
  cds:{P:"—",Q:"9/8.5/8/7.5/7",W:"12/11.5/11/10.5/10",E:"14/13.5/13/12.5/12",R:"140/120/100"},
  tips:[
   "Nível 1 — lute pela pressão e foque em pegar o nível 3.",
   "Nível 3-6 — a partir daqui é só freezar e esperar ele dar a cara."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:25,name:"Poppy",id:"Poppy",tag:"Emboscada",
+{n:25,name:"Poppy",id:"Poppy",yt:"wJalsVNwT-M",tag:"Emboscada",
  cds:{P:"—",Q:"8/7/6/5/4",W:"20/18/16/14/12",E:"14/13/12/11/10",R:"140/120/100"},
  tips:[
   "Nível 1 — jogue pelo rio colado na parede para surpreendê-la com o poke do E.",
@@ -683,68 +715,68 @@ const DATA = [
   "Nível 6 — stack dois hits para a passiva da ult, com poke de W."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:26,name:"Quinn",id:"Quinn",tag:"Give → Pulo Sutil",
+{n:26,name:"Quinn",id:"Quinn",yt:"rurZlkQr3W8",tag:"Give → Pulo Sutil",
  cds:{P:"—",Q:"11/10.5/10/9.5/9",W:"50/45/40/35/30",E:"12/11/10/9/8",R:"3"},
  tips:[
   "Nível 1 — give tudo até pegar o nível 3.",
   "Nível 3-6 — sempre que for pular, tente não ser óbvio: use o E, espere um pouco e pule em seguida."
  ],
  runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
-{n:27,name:"Renekton",id:"Renekton",tag:"Pressão + Punição",
+{n:27,name:"Renekton",id:"Renekton",yt:"tn6krvb180Y",tag:"Pressão + Punição",
  cds:{P:"—",Q:"7",W:"16/14/12/10/8",E:"16/14.5/13/11.5/10",R:"120/100/80"},
  tips:[
   "Nível 1 — a pressão é do Jax; abuse disso ficando na bush, não deixando o Renekton farmar fúria ou minions.",
   "Nível 3-6 — jogue colado nele, não gaste o Q; guarde para o segundo dash e, assim que ele dashar duas vezes, corra atrás com EQ."
  ],
  runes:"Ritmo, presença, aceleração, dilacerar, biscoito e cdr."},
-{n:28,name:"Riven",id:"Riven",tag:"Poke Seguro",
+{n:28,name:"Riven",id:"Riven",yt:"x7wasEBr6W0",tag:"Poke Seguro",
  cds:{P:"—",Q:"13",W:"11/10/9/8/7",E:"10/9/8/7/6",R:"120/90/60"},
  tips:[
   "Nível 1 — a pressão geralmente é do Jax; foque em pegar o nível 2 primeiro.",
   "Nível 3-6 — use o W com Grasp para deixar a Riven sempre low; não engaje nela, provavelmente ela te mata."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e cdr."},
-{n:29,name:"Rumble",id:"Rumble",tag:"Farm → All-in",
+{n:29,name:"Rumble",id:"Rumble",yt:"yudqV48sxWY",tag:"Farm → All-in",
  cds:{P:"—",Q:"10/9/8/7/6",W:"6",E:"6 por carga (2 cargas, 0.5s entre disparos)",R:"100/85/70"},
  tips:[
   "Nível 1 — foque em farmar atrás dos minions.",
   "Nível 3-6 — pule com todo o kit para o avanço funcionar e escolha entre correr ou bater; fique atento à passiva dele."
  ],
  runes:"Avanço da tempestade, manaflowbind, transcendência, chamuscar, biscoito e cdr."},
-{n:30,name:"Sett",id:"Sett",tag:"Trocar Nível 1",
+{n:30,name:"Sett",id:"Sett",yt:"pw5o4Twr1lU",tag:"Trocar Nível 1",
  cds:{P:"—",Q:"9/8/7/6/5",W:"18/16.5/15/13.5/12",E:"16/14.5/13/11.5/10",R:"120/100/80"},
  tips:[
   "Nível 1 — com o Bone Plating você precisa trocar 1v1, partindo da bush ou da wave; quando ele estiver com 50% de HP, use exhaust.",
   "Nível 3 — nunca pule nele; use o Q para não tomar o W dele."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, bone plating e crescimento."},
-{n:31,name:"Shen",id:"Shen",tag:"Freeze + Punição",
+{n:31,name:"Shen",id:"Shen",yt:"TkpNyhE8_70",tag:"Freeze + Punição",
  cds:{P:"—",Q:"8/7.25/6.5/5.75/5",W:"16/14.5/13/11.5/10",E:"18/16/14/12/10",R:"200/180/160"},
  tips:[
   "Nível 1 ao 20 — é só freezar; toda vez que ele der a cara, chegue melee para punir, e depois que ele dashar para sair, pule usando exhaust para matar."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."},
-{n:32,name:"Singed",id:"Singed",tag:"All-in Constante",
+{n:32,name:"Singed",id:"Singed",yt:"OUbbcxYhCkI",tag:"All-in Constante",
  cds:{P:"—",Q:"Sem recarga convencional — habilidade de ativar/desativar",W:"17/16/15/14/13",E:"10/9.5/9/8.5/8",R:"100"},
  tips:[
   "É só pular no Singed com EQ sempre."
  ],
  runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr (tenacidade nas runinhas)."},
-{n:33,name:"Sion",id:"Sion",tag:"Poke de Bush",
+{n:33,name:"Sion",id:"Sion",yt:"TrEsAExs9bg",tag:"Poke de Bush",
  cds:{P:"—",Q:"10/9/8/7/6",W:"15/14/13/12/11",E:"12/11/10/9/8",R:"140/100/60"},
  tips:[
   "Nível 1 — espere na bush e tente bater nele com o E.",
   "Nível 3-6 — sempre pule e desvie do Q dele."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, triple tonic e reembolso."},
-{n:34,name:"Teemo",id:"Teemo",tag:"Farm → All-in",
+{n:34,name:"Teemo",id:"Teemo",yt:"fkeVaOY2m6o",tag:"Farm → All-in",
  cds:{P:"—",Q:"7",W:"14",E:"Passiva, sem tempo de recarga",R:"35/30/25 por carga (0.25s entre colocações)"},
  tips:[
   "Nível 1 — evite tomar poke, usando o E para farmar.",
   "Nível 3-6 — pule, hit com o pezinho para acompanhar a velocidade dele, depois o E."
  ],
  runes:"Pezinho, presença, aceleração, dilacerar, ventos e inabalável (runinhas de tenacidade)."},
-{n:35,name:"Tryndamere",id:"Tryndamere",tag:"Reativo",
+{n:35,name:"Tryndamere",id:"Tryndamere",yt:"GqiIcPk5eWs",tag:"Reativo",
  cds:{P:"—",Q:"12",W:"14",E:"12/11/10/9/8 (reduzido em críticos)",R:"120/100/80"},
  tips:[
   "Nível 1 — geralmente a pressão é do Trynda, pois toda vez que você for hitar ele sai com o dash.",
@@ -752,13 +784,13 @@ const DATA = [
   "Nível 6 — não gaste o E se for dar all-in; guarde para a ult dele e jogue QR."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, triple tonic e reembolso."},
-{n:36,name:"Urgot",id:"Urgot",tag:"Farm → All-in",
+{n:36,name:"Urgot",id:"Urgot",yt:"MTraNumzjkQ",tag:"Farm → All-in",
  cds:{P:"—",Q:"10/9.5/9/8.5/8",W:"12/9/6/3/0 (no nível máximo vira ativar/desativar)",E:"16/15.5/15/14.5/14",R:"100/85/70"},
  tips:[
   "Nível 1 ao 6 — você só precisa pegar o nível 3 para engajar com o exhaust."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito (runinhas de tenacidade)."},
-{n:37,name:"Vayne",id:"Vayne",tag:"Farm → All-in",
+{n:37,name:"Vayne",id:"Vayne",yt:"ro41egek7Ts",tag:"Farm → All-in",
  cds:{P:"—",Q:"6/5/4/3/2",W:"Passiva, sem tempo de recarga",E:"20/18/16/14/12",R:"100/85/70"},
  tips:[
   "Nível 1 — tente givar farm.",
@@ -766,7 +798,7 @@ const DATA = [
   "Nível 6 — use todo o combo."
  ],
  runes:"Chuva de lâminas, impacto, sexto sentido, caçador de tesouros, biscoito e cdr."},
-{n:38,name:"Vladimir",id:"Vladimir",tag:"Farm → All-in",
+{n:38,name:"Vladimir",id:"Vladimir",yt:"GCm6CVZ9Kus",tag:"Farm → All-in",
  cds:{P:"—",Q:"9/7.9/6.8/5.7/4.6",W:"28/25/22/19/16",E:"13/11/9/7/5",R:"120"},
  tips:[
   "Nível 1 — give farm até o nível 3.",
@@ -774,35 +806,35 @@ const DATA = [
   "Nível 6 — pode jogar em dois tempos."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e reembolso."},
-{n:39,name:"Volibear",id:"Volibear",tag:"Pressão + Counter",
+{n:39,name:"Volibear",id:"Volibear",yt:"JwDtu3zxXto",tag:"Pressão + Counter",
  cds:{P:"—",Q:"14/13/12/11/10",W:"5",E:"16",R:"160/135/110"},
  tips:[
   "Nível 1 — use sua pressão para pegar o nível 2 primeiro.",
   "Nível 3-6 — sempre espere um pouco para usar o E; às vezes dá para dar counter no stun dele."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito (runinhas de tenacidade)."},
-{n:40,name:"Yorick",id:"Yorick",tag:"Freeze",
+{n:40,name:"Yorick",id:"Yorick",yt:"vFza_IFRToc",tag:"Freeze",
  cds:{P:"—",Q:"7/6.25/5.5/4.75/4",W:"20/18/16/14/12",E:"12/11/10/9/8",R:"160/130/100"},
  tips:[
   "Nível 1 — farme e freeze.",
   "Nível 3-6 — pule nele somente quando gastar a gaiola."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."},
-{n:41,name:"Yone",id:"Yone",tag:"Força o Dash",
+{n:41,name:"Yone",id:"Yone",yt:"yy_5Gs_FOdI",tag:"Força o Dash",
  cds:{P:"—",Q:"4 (reduzido pela velocidade de ataque)",W:"14 (reduzido pela velocidade de ataque)",E:"22/19/16/13/10",R:"120/100/80"},
  tips:[
   "Nível 1 — escolha entre trocar com ele ou givar até o nível 3.",
   "Nível 3-6 — pule nele forçando o gasto do dash."
  ],
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."},
-{n:42,name:"Yasuo",id:"Yasuo",tag:"Punir Dash",
+{n:42,name:"Yasuo",id:"Yasuo",yt:"v3t-dbEctso",tag:"Punir Dash",
  cds:{P:"—",Q:"4 (reduzido pela velocidade de ataque)",W:"25/23/21/19/17",E:"0.5/0.4/0.3/0.2/0.1 (mesmo alvo: 10/9/8/7/6)",R:"70/50/30"},
  tips:[
   "Nível 1 — com Grasp stackado, tente bater nele.",
   "Nível 3 — é só pular e usar o E para não deixar o Yasuo escapar com o dash."
  ],
  runes:"Grasp, demolir, ventos, crescimento, biscoito e cdr."},
-{n:43,name:"Zac",id:"Zac",tag:"Emboscada",
+{n:43,name:"Zac",id:"Zac",yt:"r1WoLY9djg0",tag:"Emboscada",
  cds:{P:"—",Q:"14/12.5/11/9.5/8",W:"5 (coletar gosma reduz 1s)",E:"22/19/16/13/10",R:"120/105/90"},
  tips:[
   "Nível 1 — não deixe ele farmar; espere na bush.",
@@ -933,6 +965,14 @@ function renderDetail(c){
           ${renderSkillValue(c.cds[k]).replaceAll('var(--__color)', SKILL_COLORS[k])}
         </div>
       `).join('')}
+    </div>
+
+    <div class="section-label">Vídeo do matchup</div>
+    <div class="video-card">
+      <div class="video-embed">
+        <iframe src="https://www.youtube.com/embed/${c.yt}" title="Jax vs ${c.name}" frameborder="0" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <a class="more-videos" href="https://www.youtube.com/results?search_query=${encodeURIComponent('Jax vs ' + c.name + ' matchup top lane')}" target="_blank" rel="noopener">Ver mais vídeos desse matchup no YouTube →</a>
     </div>
 
     <div class="section-label">Como jogar a lane</div>
