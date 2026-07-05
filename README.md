@@ -28,6 +28,13 @@ Siga as perguntas (aceite os padrões) e o Vercel te dará a URL pública.
 ## Estrutura
 - `index.html` — site inteiro (dados, estilos e lógica embutidos)
 - `vercel.json` — configuração mínima de deploy
+- `assets/nicklink-logo.png` — logo Nick Link (cabeçalho e rodapé)
+
+## Ícones das habilidades
+Cada card de cooldown busca automaticamente, no Data Dragon, o ícone real da
+habilidade (passiva, Q, W, E, R) daquele campeão e o mostra dentro do círculo
+colorido. A busca é feita sob demanda (ao abrir a página do campeão) e fica
+em cache no navegador durante a sessão.
 
 ## Vídeos
 Cada matchup tem um vídeo do YouTube incorporado (player oficial embutido via iframe,

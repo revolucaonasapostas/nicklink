@@ -56,12 +56,18 @@
   .topbar{
     grid-column: 1 / -1;
     display:flex;
-    align-items:baseline;
+    align-items:center;
     justify-content:space-between;
     gap:16px;
-    padding:22px 28px 16px 28px;
+    padding:16px 28px;
     border-bottom:1px solid var(--line);
     flex-wrap:wrap;
+  }
+  .site-logo{
+    height:48px;
+    width:auto;
+    flex-shrink:0;
+    filter: drop-shadow(0 2px 10px rgba(156,139,239,0.25));
   }
   .brand{
     display:flex;
@@ -319,14 +325,30 @@
     margin-bottom:12px;
   }
   .skill-dot{
-    width:26px; height:26px;
-    border-radius:7px;
+    width:32px; height:32px;
+    border-radius:8px;
     display:flex; align-items:center; justify-content:center;
     font-family:'Oswald', sans-serif;
     font-weight:700;
     font-size:14px;
     color:#0e0c16;
     flex-shrink:0;
+    position:relative;
+    overflow:hidden;
+    border:2px solid transparent;
+  }
+  .skill-dot.has-icon{
+    background:var(--bg-alt) !important;
+    border-color: var(--skill-color, var(--brass));
+  }
+  .skill-dot img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .skill-dot .letter-fallback{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
   }
   .skill-name{
     font-family:'JetBrains Mono', monospace;
@@ -463,6 +485,19 @@
     letter-spacing:0.02em;
     line-height:1.9;
   }
+  .footer-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .footer-logo{
+    height:26px;
+    width:auto;
+    opacity:0.85;
+    flex-shrink:0;
+  }
 
   /* Mobile */
   @media (max-width: 860px){
@@ -496,6 +531,7 @@
         <div class="tagline">PLANILHA 2026 — GUIA DE MATCHUPS · TOP LANE</div>
       </div>
     </div>
+    <img class="site-logo" src="assets/nicklink-logo.png" alt="Nick Link">
   </div>
 
   <aside class="sidebar">
@@ -843,6 +879,48 @@ const DATA = [
  runes:"Ritmo, triunfo, espontaneidade, dilacerar, cdr e biscoito."}
 ];
 
+/* ------------------------------------------------------------
+   Ícones reais das habilidades (P/Q/W/E/R), buscados sob demanda
+   no Data Dragon (mesma fonte oficial usada para os retratos e
+   splash arts). Resultado é cacheado por campeão.
+   ------------------------------------------------------------ */
+const abilityIconCache = {};
+
+async function getAbilityIcons(champ){
+  if(abilityIconCache[champ.id]) return abilityIconCache[champ.id];
+  try{
+    const res = await fetch(`https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/data/en_US/champion/${champ.id}.json`);
+    if(!res.ok) throw new Error('resposta inválida');
+    const json = await res.json();
+    const info = json.data[champ.id];
+    const icons = {
+      P: `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/passive/${info.passive.image.full}`
+    };
+    const order = ['Q','W','E','R'];
+    info.spells.forEach((s, i) => {
+      icons[order[i]] = `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/spell/${s.image.full}`;
+    });
+    abilityIconCache[champ.id] = icons;
+    return icons;
+  }catch(e){
+    return null;
+  }
+}
+
+function applyAbilityIcons(champ){
+  getAbilityIcons(champ).then(icons => {
+    if(!icons || currentName !== champ.name) return;
+    SKILL_ORDER.forEach(k => {
+      const dot = document.querySelector(`.skill-dot[data-skill="${k}"]`);
+      if(dot && icons[k]){
+        dot.classList.add('has-icon');
+        dot.style.setProperty('--skill-color', SKILL_COLORS[k]);
+        dot.innerHTML = `<img src="${icons[k]}" alt="${k}" loading="lazy">`;
+      }
+    });
+  });
+}
+
 /* ============================================================
    RENDER
    ============================================================ */
@@ -931,6 +1009,7 @@ function selectChampion(name){
   const c = DATA.find(d => d.name === name);
   if(!c) return;
   renderDetail(c);
+  applyAbilityIcons(c);
   renderRoster(document.getElementById('search').value);
   document.querySelectorAll('.champ-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.name === name);
@@ -959,7 +1038,7 @@ function renderDetail(c){
       ${SKILL_ORDER.map(k => `
         <div class="skill-card">
           <div class="skill-top">
-            <div class="skill-dot" style="background:${SKILL_COLORS[k]}">${k}</div>
+            <div class="skill-dot" data-skill="${k}" style="background:${SKILL_COLORS[k]}">${k}</div>
             <div class="skill-name">Cooldown por rank</div>
           </div>
           ${renderSkillValue(c.cds[k]).replaceAll('var(--__color)', SKILL_COLORS[k])}
@@ -986,7 +1065,12 @@ function renderDetail(c){
       ${escapeHtml(c.runes)}
     </div>
 
-    <footer>PLANILHA 2026 — MATCHUPS DE JAX · TEMPOS E TROCAS · DADOS PODEM MUDAR APÓS ATUALIZAÇÕES DO JOGO<br>Desenvolvido por Werbiston Júnior</footer>
+    <footer>
+      <div class="footer-row">
+        <span>PLANILHA 2026 — MATCHUPS DE JAX · TEMPOS E TROCAS · DADOS PODEM MUDAR APÓS ATUALIZAÇÕES DO JOGO<br>Desenvolvido por Werbiston Júnior</span>
+        <img class="footer-logo" src="assets/nicklink-logo.png" alt="Nick Link">
+      </div>
+    </footer>
   `;
 }
 
